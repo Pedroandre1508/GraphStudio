@@ -14,7 +14,7 @@ pip install streamlit pyvis pandas
 streamlit run streamlit_app/app.py
 ```
 
-3. **Acessar:** http://localhost:8501
+3. **Acessar:** http://localhost
 
 ## ⚙️ Funcionalidades
 

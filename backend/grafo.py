@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Optional, Set
 from collections import deque, defaultdict
+import heapq
+from typing import Optional, Tuple, List, Dict, Set
 
 @dataclass
 class Aresta:
@@ -12,6 +14,14 @@ class Aresta:
     peso: float
     rotulo: Optional[str] = None
     direcionada: bool = False
+    
+
+class Vertice:
+    def __init__(self, rotulo, lat=None, long=None):
+        self.rotulo = rotulo
+        self.lat = lat
+        self.long = long
+        self.adjacentes = {}
 
 class Grafo:
     def __init__(self, direcionado: bool = False):
@@ -21,6 +31,10 @@ class Grafo:
         self.arestas: Dict[str, Aresta] = {}
         self.vertices: Set[str] = set()
         self._contador_arestas = 0
+        self.coordenadas: Dict[str, Tuple[float, float]] = {}
+
+    def definir_coordenada(self, v: str, x: float, y: float):
+        self.coordenadas[v] = (x, y)
 
     # ---------------------------
     # utilitários de id
@@ -232,3 +246,166 @@ class Grafo:
             componentes.append(intersecao)
             restantes -= intersecao
         return componentes
+    
+    # ---------------------------
+    # Verificação de planaridade
+    # ---------------------------
+    def verificar_planaridade(self) -> Tuple[bool, str]:
+        """
+        Verifica condições necessárias de planaridade baseadas nos teoremas:
+        1. Fórmula de Euler: V - E + R = 2
+        2. Se V >= 3 então E <= 3V - 6
+        3. Se V >= 3 e não há ciclos de comprimento 3, então E <= 2V - 4
+        """
+        n = len(self.vertices)
+        m = len(self.arestas)
+        
+        # Grafo trivial
+        if n < 3:
+            return True, "Grafo com menos de 3 vértices é planar por definição."
+        
+        # Condição 1: E <= 3V - 6 (para grafos simples, planares e conexos)
+        if m > 3 * n - 6:
+            return False, f"Não planar: |E|={m} > 3|V|-6={3*n-6} (viola teorema de Euler)"
+        
+        # Verificar se há triângulos (ciclos de comprimento 3)
+        tem_triangulo = self._tem_ciclo_comprimento_3()
+        
+        # Condição 2: Se não há triângulos, E <= 2V - 4
+        if not tem_triangulo and m > 2 * n - 4:
+            return False, f"Não planar: sem triângulos e |E|={m} > 2|V|-4={2*n-4}"
+        
+        # Passou nas condições necessárias
+        if tem_triangulo:
+            return True, f"Possivelmente planar: |E|={m} <= 3|V|-6={3*n-6} (condição necessária satisfeita)"
+        else:
+            return True, f"Possivelmente planar: sem triângulos e |E|={m} <= 2|V|-4={2*n-4} (condição necessária satisfeita)"
+
+    def _tem_ciclo_comprimento_3(self) -> bool:
+        """
+        Verifica se existe um ciclo de comprimento 3 (triângulo) no grafo.
+        Retorna True se encontrar pelo menos um triângulo.
+        """
+        for u in self.vertices:
+            vizinhos_u = {v for (v, _, _) in self.adjacencia[u]}
+            for (v, _, _) in self.adjacencia[u]:
+                # Para cada vizinho v de u, verificar se há um w adjacente a ambos
+                vizinhos_v = {w for (w, _, _) in self.adjacencia[v]}
+                # Interseção dos vizinhos (excluindo u e v)
+                comum = (vizinhos_u & vizinhos_v) - {u, v}
+                if comum:
+                    return True  # Encontrou triângulo: u-v-w-u
+        return False
+
+    # ---------------------------
+    # Algoritmo de Welsh–Powell
+    # ---------------------------
+    def welsh_powell(self) -> Dict[str, int]:
+        """Coloração de grafo pelo algoritmo Welsh–Powell."""
+        graus = {v: len(self.adjacencia[v]) for v in self.vertices}
+        vertices_ordenados = sorted(self.vertices, key=lambda v: graus[v], reverse=True)
+        cor_atual = 0
+        cores: Dict[str, int] = {}
+
+        for v in vertices_ordenados:
+            if v in cores:
+                continue
+            cor_atual += 1
+            cores[v] = cor_atual
+            for u in vertices_ordenados:
+                if u not in cores:
+                    if all(cores.get(viz) != cor_atual for (viz, _, _) in self.adjacencia[u]):
+                        cores[u] = cor_atual
+        return cores
+
+    # ---------------------------
+    # Algoritmo A*
+    # ---------------------------
+    def _coord_do_vertice(self, nome: str) -> Optional[Tuple[float, float]]:
+        """
+        Retorna (lat, lon) do vértice a partir do dicionário self.coordenadas.
+        """
+        c = self.coordenadas.get(nome)
+        if c is None:
+            return None
+        try:
+            return float(c[0]), float(c[1])
+        except Exception:
+            return None
+
+    def a_estrela(self, inicio: str, destino: str) -> Tuple[List[str], float]:
+        """
+        Executa A* do vértice inicio ao destino usando self.adjacencia e
+        self.coordenadas. Heurística: distância Manhattan sobre (lat,lon).
+        Retorna (caminho, custo) ou ([], inf) se não há caminho.
+        """
+        if inicio not in self.vertices or destino not in self.vertices:
+            raise KeyError("Vértice início ou destino inexistente")
+
+        dest_coord = self._coord_do_vertice(destino)
+
+        def h(n: str) -> float:
+            c = self._coord_do_vertice(n)
+            if c is None or dest_coord is None:
+                return 0.0
+            return abs(c[0] - dest_coord[0]) + abs(c[1] - dest_coord[1])
+
+        def vizinhos_e_peso(u: str):
+            # retorna lista de (vizinho, peso)
+            if u not in self.adjacencia:
+                return []
+            return [(viz, float(peso)) for (viz, peso, _id) in self.adjacencia[u]]
+
+        # A* clássico com heap (f = g + h)
+        open_set = []
+        heapq.heappush(open_set, (h(inicio), 0.0, inicio))  # (f, g, node)
+        came_from: Dict[str, Optional[str]] = {}
+        g_score: Dict[str, float] = {inicio: 0.0}
+        closed: Set[str] = set()
+
+        while open_set:
+            fcur, gcur, node = heapq.heappop(open_set)
+            if node in closed:
+                continue
+            if node == destino:
+                # reconstruir caminho
+                path = []
+                cur = node
+                while cur is not None:
+                    path.append(cur)
+                    cur = came_from.get(cur)
+                path.reverse()
+                return path, g_score.get(destino, 0.0)
+            closed.add(node)
+
+            for (nbr, peso) in vizinhos_e_peso(node):
+                tentative_g = gcur + float(peso)
+                if tentative_g < g_score.get(nbr, float("inf")):
+                    came_from[nbr] = node
+                    g_score[nbr] = tentative_g
+                    heapq.heappush(open_set, (tentative_g + h(nbr), tentative_g, nbr))
+
+        return [], float("inf")
+
+    def calcular_tabela_heuristica(self, destino: str) -> Dict[str, float]:
+        """
+        Calcula h(n) para todos os vértices em relação ao destino.
+        Retorna dicionário {vertice: h(n)}
+        """
+        if destino not in self.vertices:
+            return {}
+        
+        dest_coord = self._coord_do_vertice(destino)
+        if dest_coord is None:
+            return {v: 0.0 for v in self.vertices}
+        
+        tabela = {}
+        for v in self.vertices:
+            v_coord = self._coord_do_vertice(v)
+            if v_coord is None:
+                tabela[v] = 0.0
+            else:
+                # Distância de Manhattan
+                tabela[v] = abs(v_coord[0] - dest_coord[0]) + abs(v_coord[1] - dest_coord[1])
+        
+        return tabela

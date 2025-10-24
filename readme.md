@@ -1,50 +1,77 @@
-# 📊 GraphStudio - Projeto de Grafos
+# ⚛️ GraphStudio
 
-Sistema para manipulação de grafos.
+Sistema avançado para manipulação e análise de grafos desenvolvido para a disciplina de Grafos.
+
+**Desenvolvido por:** Pedro André e Eduardo Ueda  
+**Instituição:** UNIVALI - Ciência da Computação 2025/2  
+**Professora:** Fernanda Cunha
+
+### 🎨 Visualização Gráfica (Requisito Obrigatório)
+- ✅ Grafo original renderizado com pyvis
+- ✅ Welsh-Powell: vértices coloridos
+- ✅ A*: caminho destacado em azul com largura maior
+- ✅ Interface profissional com Streamlit
 
 ## 🚀 Como Executar
 
-1. **Instalar dependências:**
+### 1. **Instalar dependências:**
 ```bash
-pip install streamlit pyvis pandas
+pip install -r requirements.txt
 ```
 
-2. **Rodar aplicação:**
+### 2. **Rodar aplicação:**
 ```bash
 streamlit run streamlit_app/app.py
 ```
 
-3. **Acessar:** http://localhost
+### 3. **Acessar:** 
+http://localhost:8501
 
-## ⚙️ Funcionalidades
+## 📂 Estrutura do Projeto
 
-### Operações Básicas
-- ✅ Adicionar/remover vértices
-- ✅ Adicionar/remover arestas
-- ✅ Grafos direcionados e não-direcionados
+```
+GraphStudio-main/
+├── backend/
+│   ├── grafo.py           # Classe principal com algoritmos
+│   └── importador.py      # Importação de CSV
+├── data/
+│   ├── cidades.csv        # Mapa do Paraná (lat/long)
+│   ├── k33_nao_planar.csv # Grafo K₃,₃ (teste de planaridade)
+│   └── teste.csv          # Outros testes
+├── streamlit_app/
+│   └── app.py             # Interface Streamlit
+└── requirements.txt       # Dependências
+```
 
-### Algoritmos
-- ✅ **Prim** - Árvore Geradora Mínima
-- ✅ **BFS** - Busca em Largura  
-- ✅ **DFS** - Busca em Profundidade
-- ✅ **Roy** - Componentes Fortemente Conexas
+## ⚙️ Funcionalidades Completas
 
-### Visualização
-- ✅ Grafo interativo (pyvis)
-- ✅ Matriz de adjacência
-- ✅ Matriz de incidência
+### Algoritmos Implementados
+- **Prim** - Árvore Geradora Mínima
+- **BFS** - Busca em Largura  
+- **DFS** - Busca em Profundidade
+- **Roy** - Componentes Fortemente Conexas
+- **A*** - Caminho mínimo com heurística Manhattan
+- **Welsh-Powell** - Coloração de vértices
+- **Verificação de Planaridade** - Teoremas de Euler
 
-## 🎯 Como Usar
+## 📊 Formato do CSV
 
-1. **Menu "Inserção"**: Adicione vértices e arestas
-2. **Menu "Algoritmos"**: Execute algoritmos e veja resultados
-3. **Menu "Matrizes"**: Visualize representações matriciais
-4. **Visualização**: Grafo interativo na parte inferior
+```csv
+origem,destino,peso,lat_origem,long_origem,lat_destino,long_destino
+Arad,Zerind,75,46.1667,21.3167,46.6167,21.5167
+Arad,Timisoara,118,46.1667,21.3167,45.7597,21.23
+```
 
-## 📋 Requisitos
+- **Obrigatórios:** origem, destino, peso
+- **Opcionais:** lat_origem, long_origem, lat_destino, long_destino (para A*)
+
+## 📋 Requisitos Técnicos
 
 - Python 3.8+
-- streamlit, pyvis, pandas
+- streamlit >= 1.10
+- pyvis >= 0.2.1
+- pandas >= 1.3
 
 ---
-**Desenvolvido por:** Eduardo Ueda e Pedro André
+**© 2025 - UNIVALI - Ciência da Computação**
+

@@ -1,0 +1,13 @@
+origem,destino,peso,lat_origem,long_origem,lat_destino,long_destino
+Florianopolis,Sao_Jose,8,-27.5954,-48.548, -27.6153,-48.6575
+Florianopolis,Palhoca,25,-27.5954,-48.548, -27.6295,-48.657
+Florianopolis,Biguacu,18,-27.5954,-48.548, -27.609,-48.665
+Sao_Jose,Palhoca,12,-27.6153,-48.6575, -27.6295,-48.657
+Palhoca,Biguacu,20,-27.6295,-48.657, -27.609,-48.665
+Palhoca,Santo_Amaro,30,-27.6295,-48.657, -27.749,-48.706
+Santo_Amaro,Rancho_Queimado,15,-27.749,-48.706, -27.767,-48.763
+Palhoca,Garopaba,50,-27.6295,-48.657, -28.0178,-48.6196
+Biguacu,Tijucas,40,-27.609,-48.665, -27.2592,-48.6456
+Tijucas,Florianopolis,45,-27.2592,-48.6456, -27.5954,-48.548
+Garopaba,Florianopolis,60,-28.0178,-48.6196, -27.5954,-48.548
+Tijucas,Sao_Jose,35,-27.2592,-48.6456, -27.6153,-48.6575

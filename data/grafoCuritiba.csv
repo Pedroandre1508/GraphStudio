@@ -1,0 +1,15 @@
+origem,destino,peso,lat_origem,long_origem,lat_destino,long_destino
+Foz do Iguaçu,Cascavel,143,-25.5163,-54.5882,-24.9555,-53.4552
+Cascavel,Toledo,50,-24.9555,-53.4552,-24.7240,-53.7412
+Cascavel,Guarapuava,250,-24.9555,-53.4552,-25.3905,-51.4622
+Cascavel,Francisco Beltrão,186,-24.9555,-53.4552,-26.0627,-53.0623
+Toledo,Umuarama,126,-24.7240,-53.7412,-23.7656,-53.3201
+Umuarama,Maringá,190,-23.7656,-53.3201,-23.4205,-51.9333
+Maringá,Londrina,114,-23.4205,-51.9333,-23.3045,-51.1696
+Francisco Beltrão,São Mateus do Sul,354,-26.0627,-53.0623,-25.8677,-50.3844
+São Mateus do Sul,Curitiba,157,-25.8677,-50.3844,-25.4284,-49.2733
+Guarapuava,Ponta Grossa,165,-25.3905,-51.4622,-25.0916,-50.1619
+Ponta Grossa,Curitiba,114,-25.0916,-50.1619,-25.4284,-49.2733
+Ponta Grossa,Londrina,273,-25.0916,-50.1619,-23.3045,-51.1696
+Ponta Grossa,Maringá,314,-25.0916,-50.1619,-23.4205,-51.9333
+Curitiba,Paranaguá,90,-25.4284,-49.2733,-25.5161,-48.5220

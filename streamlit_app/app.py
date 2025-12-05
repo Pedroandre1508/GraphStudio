@@ -10,6 +10,7 @@ from backend.importador import importar_csv
 from backend.grafo import Grafo
 from pyvis.network import Network
 import tempfile
+from streamlit_app import tsp_ga  # adiciona a aba do Algoritmo Genético
 
 st.set_page_config(
     page_title="GraphStudio",
@@ -488,3 +489,11 @@ st.markdown(f"""
         Disciplina: Grafos
     </div>
 """, unsafe_allow_html=True)
+
+# ----------------------------
+# ALGORITMO GENÉTICO (TSP)
+# ----------------------------
+st.sidebar.markdown("---")
+page = st.sidebar.selectbox("Ferramentas", ["Visualizar Grafo", "Algoritmo Genético"])
+if page == "Algoritmo Genético":
+    tsp_ga.mount()

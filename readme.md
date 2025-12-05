@@ -11,6 +11,7 @@ Sistema avançado para manipulação e análise de grafos desenvolvido para a di
 - ✅ Welsh-Powell: vértices coloridos
 - ✅ A*: caminho destacado em azul com largura maior
 - ✅ Interface profissional com Streamlit
+- ✅ Algoritmo Genético
 
 ## 🚀 Como Executar
 
@@ -74,4 +75,3 @@ Arad,Timisoara,118,46.1667,21.3167,45.7597,21.23
 
 ---
 **© 2025 - UNIVALI - Ciência da Computação**
-
